@@ -231,75 +231,27 @@ function App() {
 
     return (
       <div className="container">
-      <header className="header">
-        <h1>Dormmate</h1>
-        <p className="tagline">The campus marketplace tailored for students</p>
-        {isHomepageVisible && (
-          <div className="user-info">
-            <p>{firstName} {lastName}</p>
-            <p>Balance: ${balance.toFixed(2)}</p>
-          </div>
-        )}
-      </header>
-
-      {/* Sidebar */}
-      {isHomepageVisible && (
-        <div className="sidebar">
-          <h3>Sort by Price</h3>
-          <select value={sortOrder} onChange={handleSortOrderChange} className="select-field">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </select>
-          <h3>Filter by Location</h3>
-          <select value={locationFilter} onChange={handleLocationFilterChange} className="select-field">
-            <option value="">-- Select an option --</option>
-            <option value="ozanam">Ozanam</option>
-            <option value="munroe">Munroe</option>
-            <option value="lecompte">LeCompte</option>
-            <option value="university">University</option>
-            <option value="seton">Seton</option>
-            <option value="corcoran">Corcoran</option>
-          </select>
-        </div>
-      )}
-
-      {/* Login/Email Form */}
-      {!isHomepageVisible && (
-        <div className="form-container">
-          <h3>Please enter your .edu email</h3>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            placeholder="Enter your .edu email"
-            className="input-field"
-          />
-          <input
-            type="text"
-            value={firstName}
-            onChange={handleFirstNameChange}
-            placeholder="Enter your first name"
-            className="input-field"
-          />
-          <input
-            type="text"
-            value={lastName}
-            onChange={handleLastNameChange}
-            placeholder="Enter your last name"
-            className="input-field"
-          />
-          {errorMessage && (
-            <p className={errorMessage.includes('❌') ? 'error' : 'success'}>
-              {errorMessage}
-            </p>
+        <header className="header">
+          <h1>Dormmate</h1>
+          <p className="tagline">The campus marketplace tailored for students</p>
+          {isHomepageVisible && (
+            <div className="user-info">
+              <p>{firstName} {lastName}</p>
+              <p>Balance: ${balance.toFixed(2)}</p>
+            </div>
           )}
-          <div className="dropdown-container">
-            <h3>Select Dorm Building:</h3>
-            <select
-              value={selectedOption}
-              onChange={handleChange}
-              className="select-field"
-            >
+        </header>
+
+        {/* Sidebar */}
+        {isHomepageVisible && (
+          <aside className="sidebar">
+            <h3>Sort by Price</h3>
+            <select value={sortOrder} onChange={handleSortOrderChange} className="select-field">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+            <h3>Filter by Location</h3>
+            <select value={locationFilter} onChange={handleLocationFilterChange} className="select-field">
               <option value="">-- Select an option --</option>
               <option value="ozanam">Ozanam</option>
               <option value="munroe">Munroe</option>
@@ -308,75 +260,44 @@ function App() {
               <option value="seton">Seton</option>
               <option value="corcoran">Corcoran</option>
             </select>
-          </div>
-          <button onClick={handleSubmit} className="button">
-            Submit
-          </button>
-        </div>
-      )}
+          </aside>
+        )}
 
-      {/* Homepage with Listings */}
-      {isHomepageVisible && (
-        <div className="homepage">
-          <div className="homepage-header">
-            <h1 style={{ textAlign: 'center' }}>Homepage</h1>
-            <button
-              className="button create-btn"
-              onClick={() => setIsCreateListingVisible(true)}
-            >
-              Create Listing
-            </button>
-          
-          </div>
-          <h2>Listings</h2>
-          <div className="listings">
-            {filteredListings.map((listing, index) => (
-              <div key={index} className="listing-card">
-                <h3>{listing.title}</h3>
-                <p>Price: ${listing.price}</p>
-                <p>Location: {listing.location}</p>
-                {listing.image && (
-                  <img src={listing.image} alt="Listing" className="listing-image" />
-                )}
-                <button onClick={() => handleBuy(index)} className="button buy-btn">
-                  Buy
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Create Listing Modal */}
-      {isCreateListingVisible && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Create a Listing</h2>
-            <div className="modal-form-group">
-              <label>Title</label>
-              <input
-                type="text"
-                value={title}
-                onChange={handleTitleChange}
-                placeholder="Title"
-                className="input-field"
-              />
-            </div>
-            <div className="modal-form-group">
-              <label>Price ($)</label>
-              <input
-                type="number"
-                value={price}
-                onChange={handlePriceChange}
-                placeholder="Price $"
-                className="input-field"
-              />
-            </div>
-            <div className="modal-form-group">
-              <label>Location</label>
+        {/* Login/Email Form */}
+        {!isHomepageVisible && (
+          <div className="form-container">
+            <h3>Please enter your .edu email</h3>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder="Enter your .edu email"
+              className="input-field"
+            />
+            <input
+              type="text"
+              value={firstName}
+              onChange={handleFirstNameChange}
+              placeholder="Enter your first name"
+              className="input-field"
+            />
+            <input
+              type="text"
+              value={lastName}
+              onChange={handleLastNameChange}
+              placeholder="Enter your last name"
+              className="input-field"
+            />
+            {errorMessage && (
+              <p className={errorMessage.includes('❌') ? 'error' : 'success'}>
+                {errorMessage}
+              </p>
+            )}
+            <div className="dropdown-container">
+              <h3>Select Dorm Building:</h3>
               <select
-                value={selectedOptionListing}
-                onChange={handleListingChange}
+                value={selectedOption}
+                onChange={handleChange}
                 className="select-field"
               >
                 <option value="">-- Select an option --</option>
@@ -388,65 +309,144 @@ function App() {
                 <option value="corcoran">Corcoran</option>
               </select>
             </div>
-            <div className="modal-form-group">
-              <label>Image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="input-field"
-              />
-            </div>
-            {imageInput && (
-              <div className="modal-form-group">
-                <label>Image Preview:</label>
-                <img src={imageInput} alt="Preview" className="image-preview" />
-              </div>
-            )}
-            <div className="modal-buttons">
-              <button onClick={handleListingSubmit} className="button modal-btn">
-                Submit
-              </button>
-              <button
-                onClick={() => setIsCreateListingVisible(false)}
-                className="button modal-btn cancel"
-              >
-                Cancel
-              </button>
-            </div>
+            <button onClick={handleSubmit} className="button">
+              Submit
+            </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Purchase Confirmation Popup */}
-      {isPopupVisible && selectedListing && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Confirm Purchase</h2>
-            <p>Title: {selectedListing.title}</p>
-            <p>Price: ${selectedListing.price}</p>
-            <p>Location: {selectedListing.location}</p>
-            {selectedListing.image && (
-              <img src={selectedListing.image} alt="Listing" className="listing-image" />
-            )}
-            <div className="modal-buttons">
-              <button onClick={handleConfirmPurchase} className="button modal-btn">
-                Confirm
-              </button>
+        {/* Homepage with Listings */}
+        {isHomepageVisible && (
+          <main className="homepage">
+            <div className="homepage-header">
+              <h1 style={{ textAlign: 'center' }}>Homepage</h1>
               <button
-                onClick={() => setIsPopupVisible(false)}
-                className="button modal-btn cancel"
+                className="button create-btn"
+                onClick={() => setIsCreateListingVisible(true)}
               >
-                Cancel
+                Create Listing
               </button>
+            
             </div>
-            {errorMessage && (
-              <p className="error">{errorMessage}</p>
-            )}
+            <h2>Listings</h2>
+            <div className="listings">
+              {filteredListings.map((listing, index) => (
+                <div key={index} className="listing-card">
+                  <h3>{listing.title}</h3>
+                  <p>Price: ${listing.price}</p>
+                  <p>Location: {listing.location}</p>
+                  {listing.image && (
+                    <img src={listing.image} alt="Listing" className="listing-image" />
+                  )}
+                  <button onClick={() => handleBuy(index)} className="button buy-btn">
+                    Buy
+                  </button>
+                </div>
+              ))}
+            </div>
+          </main>
+        )}
+
+        {/* Create Listing Modal */}
+        {isCreateListingVisible && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>Create a Listing</h2>
+              <div className="modal-form-group">
+                <label>Title</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={handleTitleChange}
+                  placeholder="Title"
+                  className="input-field"
+                />
+              </div>
+              <div className="modal-form-group">
+                <label>Price ($)</label>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={handlePriceChange}
+                  placeholder="Price $"
+                  className="input-field"
+                />
+              </div>
+              <div className="modal-form-group">
+                <label>Location</label>
+                <select
+                  value={selectedOptionListing}
+                  onChange={handleListingChange}
+                  className="select-field"
+                >
+                  <option value="">-- Select an option --</option>
+                  <option value="ozanam">Ozanam</option>
+                  <option value="munroe">Munroe</option>
+                  <option value="lecompte">LeCompte</option>
+                  <option value="university">University</option>
+                  <option value="seton">Seton</option>
+                  <option value="corcoran">Corcoran</option>
+                </select>
+              </div>
+              <div className="modal-form-group">
+                <label>Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="input-field"
+                />
+              </div>
+              {imageInput && (
+                <div className="modal-form-group">
+                  <label>Image Preview:</label>
+                  <img src={imageInput} alt="Preview" className="image-preview" />
+                </div>
+              )}
+              <div className="modal-buttons">
+                <button onClick={handleListingSubmit} className="button modal-btn">
+                  Submit
+                </button>
+                <button
+                  onClick={() => setIsCreateListingVisible(false)}
+                  className="button modal-btn cancel"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {/* Purchase Confirmation Popup */}
+        {isPopupVisible && selectedListing && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>Confirm Purchase</h2>
+              <p>Title: {selectedListing.title}</p>
+              <p>Price: ${selectedListing.price}</p>
+              <p>Location: {selectedListing.location}</p>
+              {selectedListing.image && (
+                <img src={selectedListing.image} alt="Listing" className="listing-image" />
+              )}
+              <div className="modal-buttons">
+                <button onClick={handleConfirmPurchase} className="button modal-btn">
+                  Confirm
+                </button>
+                <button
+                  onClick={() => setIsPopupVisible(false)}
+                  className="button modal-btn cancel"
+                >
+                  Cancel
+                </button>
+              </div>
+              {errorMessage && (
+                <p className="error">{errorMessage}</p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     );
 }
 
