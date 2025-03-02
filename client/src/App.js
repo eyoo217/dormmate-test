@@ -5,6 +5,8 @@ function App() {
     const [data, setData] = useState(null);
     const [hasFetched, setHasFetched] = useState(false);
     const [inputValue, setInputValue] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
     const [imageInput, setImageInput] = useState(null);
@@ -14,7 +16,8 @@ function App() {
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState('');
     const [listings, setListings] = useState([]);
-
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [selectedListing, setSelectedListing] = useState(null);
 
     const fetchData = async () => { 
       try {
@@ -40,6 +43,14 @@ function App() {
     const handleInputChange = (event) => {
       setInputValue(event.target.value);
       setErrorMessage(''); // Clear error message when typing
+    };
+
+    const handleFirstNameChange = (event) => {
+      setFirstName(event.target.value);
+    };
+
+    const handleLastNameChange = (event) => {
+      setLastName(event.target.value);
     };
 
     const handleChange = (event) => {
@@ -72,7 +83,7 @@ function App() {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email: inputValue })
+            body: JSON.stringify({ email: inputValue, firstName, lastName })
           });
 
           if (response.ok) {
@@ -120,28 +131,42 @@ function App() {
       setIsCreateListingVisible(false);
     };
 
-    const handleBuy = async (index) => {
-      const listing = listings[index];
+    const handleBuy = (index) => {
+      setSelectedListing(listings[index]);
+      setIsPopupVisible(true);
+    };
+
+    const handleConfirmPurchase = async () => {
+      if (!selectedListing) return;
+
+      console.log('handleConfirmPurchase called');
+      console.log('Selected listing:', selectedListing);
+
       try {
         const response = await fetch('http://localhost:5000/buy-item', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ email: inputValue, price: listing.price })
+          body: JSON.stringify({ email: inputValue, firstName, lastName, price: selectedListing.price })
         });
 
         if (response.ok) {
+          console.log('Purchase confirmed');
           // Remove the listing from the state and local storage
-          const updatedListings = listings.filter((_, i) => i !== index);
+          const updatedListings = listings.filter((listing) => listing !== selectedListing);
           setListings(updatedListings);
           localStorage.setItem('listings', JSON.stringify(updatedListings));
+          setIsPopupVisible(false);
+          console.log('Popup closed');
         } else {
           const error = await response.json();
           setErrorMessage(`❌ ${error.error}`);
+          console.log('Purchase error:', error);
         }
       } catch (error) {
         setErrorMessage(`❌ Fetch error: ${error.message}`);
+        console.log('Fetch error:', error);
       }
     };
 
@@ -173,6 +198,20 @@ function App() {
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Enter your .edu email"
+            className="input-field"
+          />
+          <input
+            type="text"
+            value={firstName}
+            onChange={handleFirstNameChange}
+            placeholder="Enter your first name"
+            className="input-field"
+          />
+          <input
+            type="text"
+            value={lastName}
+            onChange={handleLastNameChange}
+            placeholder="Enter your last name"
             className="input-field"
           />
           {errorMessage && (
@@ -295,6 +334,32 @@ function App() {
               </button>
               <button
                 onClick={() => setIsCreateListingVisible(false)}
+                className="button modal-btn cancel"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Purchase Confirmation Popup */}
+      {isPopupVisible && selectedListing && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Confirm Purchase</h2>
+            <p>Title: {selectedListing.title}</p>
+            <p>Price: ${selectedListing.price}</p>
+            <p>Location: {selectedListing.location}</p>
+            {selectedListing.image && (
+              <img src={selectedListing.image} alt="Listing" className="listing-image" />
+            )}
+            <div className="modal-buttons">
+              <button onClick={handleConfirmPurchase} className="button modal-btn">
+                Confirm
+              </button>
+              <button
+                onClick={() => setIsPopupVisible(false)}
                 className="button modal-btn cancel"
               >
                 Cancel

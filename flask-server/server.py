@@ -16,20 +16,24 @@ def customers():
 @app.route("/submit-email", methods=["POST"])
 def submit_email():
     email = request.json.get("email")
-    if not email:
-        return jsonify({"error": "Email is required"}), 400
+    first_name = request.json.get("firstName")
+    last_name = request.json.get("lastName")
+    if not email or not first_name or not last_name:
+        return jsonify({"error": "Email, first name, and last name are required"}), 400
 
-    # Log the email (you can add any additional logging or processing here)
-    print(f"Email submitted: {email}")
+    # Log the email, first name, and last name (you can add any additional logging or processing here)
+    print(f"Email submitted: {email}, First Name: {first_name}, Last Name: {last_name}")
 
     return jsonify({"message": "Email successfully submitted!"}), 200
 
 @app.route("/buy-item", methods=["POST"])
 def buy_item():
     email = request.json.get("email")
+    first_name = request.json.get("firstName")
+    last_name = request.json.get("lastName")
     price = request.json.get("price")
-    if not email or not price:
-        return jsonify({"error": "Email and price are required"}), 400
+    if not email or not first_name or not last_name or not price:
+        return jsonify({"error": "Email, first name, last name, and price are required"}), 400
 
     account = findAccountByEmail(email)
     if not account:
@@ -39,8 +43,11 @@ def buy_item():
     if new_balance < 0:
         return jsonify({"error": "Insufficient funds"}), 400
 
-    updateAccountBalance(account["_id"], new_balance)
-    return jsonify({"message": "Purchase successful"}), 200
+    update_result = withdraw_balance(account["_id"], float(price), apiKey)
+    if update_result:
+        return jsonify({"message": "Purchase successful"}), 200
+    else:
+        return jsonify({"error": "Failed to update account balance"}), 500
 
 def getCustomers():
     url = f'http://api.nessieisreal.com/customers?key={apiKey}'
@@ -65,20 +72,23 @@ def findAccountByEmail(email):
             return accounts[0]  # Assuming the first account is the one we want
     return None
 
-def updateAccountBalance(account_id, new_balance):
-    url = f'http://api.nessieisreal.com/accounts/{account_id}?key={apiKey}'
+def withdraw_balance(account_id, amount, api_key):
+    url = f"http://api.nessieisreal.com/accounts/{account_id}/withdrawals?key={api_key}"
     payload = {
-        "balance": new_balance
+        "medium": "balance",
+        "transaction_date": "2025-03-01",
+        "amount": amount,
+        "description": "Purchase withdrawal"
     }
-    response = requests.put(url, json=payload, headers={
-    "Content-Type": "application/json"
-    })
-
-    if response.status_code == 202:
-        return response.json()
+    print(f"Withdrawing from account with payload: {payload}")  # Log the payload
+    response = requests.post(url, json=payload)
+    
+    if response.status_code == 201:
+        print("Account updated successfully!")
+        return True
     else:
-        print("Account balance update failed:", response.text)  # Log the error response
-        return None
+        print(f"Error: {response.status_code} - {response.text}")
+        return False
 
 if __name__ == "__main__":
     app.run(debug=True)
