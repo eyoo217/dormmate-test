@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import requests
 
-apiKey = '043dbee2fe864fd8bb3fb12c19274d42'
+apiKey = 'you-API-key'
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE"], "allow_headers": ["Content-Type", "Authorization"]}})
@@ -64,7 +64,7 @@ def buy_item():
 def getCustomers():
     url = f'http://api.nessieisreal.com/customers?key={apiKey}'
     response = requests.get(url, headers={
-    "Content-Type": "application/json"
+        "Content-Type": "application/json"
     })
 
     if response.status_code == 200:
@@ -75,7 +75,7 @@ def getCustomers():
 def findAccountByEmail(email):
     url = f'http://api.nessieisreal.com/accounts?key={apiKey}&email={email}'
     response = requests.get(url, headers={
-    "Content-Type": "application/json"
+        "Content-Type": "application/json"
     })
 
     if response.status_code == 200:
@@ -94,7 +94,7 @@ def withdraw_balance(account_id, amount, api_key):
     }
     print(f"Withdrawing from account with payload: {payload}")  # Log the payload
     response = requests.post(url, json=payload)
-    
+
     if response.status_code == 201:
         print("Account updated successfully!")
         return True

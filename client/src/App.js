@@ -21,10 +21,8 @@ function App() {
     const [selectedListing, setSelectedListing] = useState(null);
     const [sortOrder, setSortOrder] = useState('asc');
     const [locationFilter, setLocationFilter] = useState('');
-    const [cart, setCart] = useState([]);
-    const [isCartPopupVisible, setIsCartPopupVisible] = useState(false);
 
-    const fetchData = async () => { 
+    const fetchData = async () => {
       try {
         const response = await fetch('http://localhost:5000/customer');
 
@@ -72,57 +70,6 @@ function App() {
 
     const handlePriceChange = (event) => {
       setPrice(event.target.value);
-    };
-
-    const handleConfirmCartPurchase = () => {
-      setIsCartPopupVisible(true);
-    };
-
-    const addToCart = (listing) => {
-      const isItemInCart = cart.some(item => item.title === listing.title && item.price === listing.price);
-      if (!isItemInCart) {
-        setCart([...cart, listing]);
-      }
-    };
-    
-    const removeFromCart = (index) => {
-      const newCart = [...cart];
-      newCart.splice(index, 1);
-      setCart(newCart);
-    };
-
-    const handleCartPurchase = async () => {
-      try {
-        for (const item of cart) {
-          const response = await fetch('http://localhost:5000/buy-item', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: inputValue, firstName, lastName, price: item.price })
-          });
-    
-          if (!response.ok) {
-            const error = await response.json();
-            setErrorMessage(`❌ ${error.error}`);
-            console.log('Purchase error:', error);
-            return;
-          }
-        }
-    
-        console.log('Cart purchase confirmed');
-        // Remove purchased items from listings and local storage
-        const updatedListings = listings.filter(listing => !cart.includes(listing));
-        setListings(updatedListings);
-        localStorage.setItem('listings', JSON.stringify(updatedListings));
-    
-        setCart([]); // Clear the cart after purchase
-        fetchUserBalance(inputValue); // Update balance after purchase
-        setIsCartPopupVisible(false); // Close the cart purchase confirmation popup
-      } catch (error) {
-        setErrorMessage(`❌ Fetch error: ${error.message}`);
-        console.log('Fetch error:', error);
-      }
     };
 
     const handleSubmit = async () => {
@@ -203,13 +150,8 @@ function App() {
     };
 
     const handleBuy = (index) => {
-      const listing = listings[index];
-      addToCart(listing);
-      setIsPopupVisible(false); // Close the popup after adding to cart
-    };
-
-    const handlePurchaseCart = () => {
-      setIsCartPopupVisible(true);
+      setSelectedListing(listings[index]);
+      setIsPopupVisible(true);
     };
 
     const handleConfirmPurchase = async () => {
@@ -384,7 +326,7 @@ function App() {
               >
                 Create Listing
               </button>
-           
+
             </div>
             <h2>Listings</h2>
             <div className="listings">
@@ -403,35 +345,6 @@ function App() {
               ))}
             </div>
           </main>
-        )}
-
-        {isCartPopupVisible && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h2>Confirm Cart Purchase</h2>
-              <ul>
-                {cart.map((item, index) => (
-                  <li key={index}>
-                    {item.title} - ${item.price}
-                  </li>
-                ))}
-              </ul>
-              <div className="modal-buttons">
-                <button onClick={handleCartPurchase} className="button modal-btn">
-                  Confirm Purchase
-                </button>
-                <button
-                  onClick={() => setIsCartPopupVisible(false)}
-                  className="button modal-btn cancel"
-                >
-                  Cancel
-                </button>
-              </div>
-              {errorMessage && (
-                <p className="error">{errorMessage}</p>
-              )}
-            </div>
-          </div>
         )}
 
         {/* Create Listing Modal */}
@@ -520,9 +433,6 @@ function App() {
                 <button onClick={handleConfirmPurchase} className="button modal-btn">
                   Confirm
                 </button>
-                <button onClick={() => addToCart(selectedListing)} className="button modal-btn">
-                  Add to Cart
-                </button>
                 <button
                   onClick={() => setIsPopupVisible(false)}
                   className="button modal-btn cancel"
@@ -534,30 +444,6 @@ function App() {
                 <p className="error">{errorMessage}</p>
               )}
             </div>
-          </div>
-        )}
-        {isHomepageVisible && (
-  <div className="cart">
-    <h3>Cart</h3>
-    {cart.length === 0 ? (
-      <p>Your cart is empty</p>
-    ) : (
-      <ul>
-        {cart.map((item, index) => (
-          <li key={index}>
-            {item.title} - ${item.price}
-            <button onClick={() => removeFromCart(index)} className="button remove-btn">
-              Remove
-            </button>
-          </li>
-        ))}
-      </ul>
-    )}
-    {cart.length > 0 && (
-      <button onClick={handleCartPurchase} className="button purchase-btn">
-        Purchase Cart
-      </button>
-            )}
           </div>
         )}
       </div>
