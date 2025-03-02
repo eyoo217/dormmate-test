@@ -2,7 +2,7 @@ import requests
 import json
 
 
-apiKey = '043dbee2fe864fd8bb3fb12c19274d42'
+apiKey = 'your-api-key'
 
 def getAccountsForCustomer(customer_id: str): #Output: all accounts of that customer with all Account ID's Input: Cust_ID
     """
@@ -31,4 +31,4 @@ def getAccountsForCustomer(customer_id: str): #Output: all accounts of that cust
         return None
     
 
-getAccountsForCustomer('67c261199683f20dd518bffc')
+getAccountsForCustomer('customer_id')
