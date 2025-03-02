@@ -7,6 +7,7 @@ function App() {
     const [inputValue, setInputValue] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [balance, setBalance] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
     const [imageInput, setImageInput] = useState(null);
@@ -18,6 +19,8 @@ function App() {
     const [listings, setListings] = useState([]);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [selectedListing, setSelectedListing] = useState(null);
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [locationFilter, setLocationFilter] = useState('');
 
     const fetchData = async () => { 
       try {
@@ -90,6 +93,7 @@ function App() {
             const result = await response.json();
             console.log('Email submission result:', result);
             setIsHomepageVisible(true);
+            fetchUserBalance(inputValue);
           } else {
             const error = await response.json();
             setErrorMessage(`❌ ${error.error}`);
@@ -97,6 +101,20 @@ function App() {
         } catch (error) {
           setErrorMessage(`❌ Fetch error: ${error.message}`);
         }
+      }
+    };
+
+    const fetchUserBalance = async (email) => {
+      try {
+        const response = await fetch(`http://localhost:5000/account-balance?email=${email}`);
+        if (response.ok) {
+          const result = await response.json();
+          setBalance(result.balance);
+        } else {
+          console.log('Failed to fetch balance');
+        }
+      } catch (error) {
+        console.log('Fetch error:', error);
       }
     };
 
@@ -159,6 +177,7 @@ function App() {
           localStorage.setItem('listings', JSON.stringify(updatedListings));
           setIsPopupVisible(false);
           console.log('Popup closed');
+          fetchUserBalance(inputValue); // Update balance after purchase
         } else {
           const error = await response.json();
           setErrorMessage(`❌ ${error.error}`);
@@ -168,6 +187,19 @@ function App() {
         setErrorMessage(`❌ Fetch error: ${error.message}`);
         console.log('Fetch error:', error);
       }
+    };
+
+    const handleClearListings = () => {
+      localStorage.clear();
+      setListings([]);
+    };
+
+    const handleSortOrderChange = (event) => {
+      setSortOrder(event.target.value);
+    };
+
+    const handleLocationFilterChange = (event) => {
+      setLocationFilter(event.target.value);
     };
 
     useEffect(() => {
@@ -182,12 +214,54 @@ function App() {
       }
     }, [hasFetched]);
 
+    useEffect(() => {
+      const sortedListings = [...listings].sort((a, b) => {
+        if (sortOrder === 'asc') {
+          return a.price - b.price;
+        } else {
+          return b.price - a.price;
+        }
+      });
+      setListings(sortedListings);
+    }, [sortOrder]);
+
+    const filteredListings = listings.filter(listing => {
+      return locationFilter === '' || listing.location === locationFilter;
+    });
+
     return (
       <div className="container">
       <header className="header">
         <h1>Dormmate</h1>
         <p className="tagline">The campus marketplace tailored for students</p>
+        {isHomepageVisible && (
+          <div className="user-info">
+            <p>{firstName} {lastName}</p>
+            <p>Balance: ${balance.toFixed(2)}</p>
+          </div>
+        )}
       </header>
+
+      {/* Sidebar */}
+      {isHomepageVisible && (
+        <div className="sidebar">
+          <h3>Sort by Price</h3>
+          <select value={sortOrder} onChange={handleSortOrderChange} className="select-field">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+          <h3>Filter by Location</h3>
+          <select value={locationFilter} onChange={handleLocationFilterChange} className="select-field">
+            <option value="">-- Select an option --</option>
+            <option value="ozanam">Ozanam</option>
+            <option value="munroe">Munroe</option>
+            <option value="lecompte">LeCompte</option>
+            <option value="university">University</option>
+            <option value="seton">Seton</option>
+            <option value="corcoran">Corcoran</option>
+          </select>
+        </div>
+      )}
 
       {/* Login/Email Form */}
       {!isHomepageVisible && (
@@ -252,10 +326,11 @@ function App() {
             >
               Create Listing
             </button>
+          
           </div>
           <h2>Listings</h2>
           <div className="listings">
-            {listings.map((listing, index) => (
+            {filteredListings.map((listing, index) => (
               <div key={index} className="listing-card">
                 <h3>{listing.title}</h3>
                 <p>Price: ${listing.price}</p>
@@ -365,6 +440,9 @@ function App() {
                 Cancel
               </button>
             </div>
+            {errorMessage && (
+              <p className="error">{errorMessage}</p>
+            )}
           </div>
         </div>
       )}

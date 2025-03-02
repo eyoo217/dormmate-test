@@ -26,6 +26,18 @@ def submit_email():
 
     return jsonify({"message": "Email successfully submitted!"}), 200
 
+@app.route("/account-balance", methods=["GET"])
+def account_balance():
+    email = request.args.get("email")
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    account = findAccountByEmail(email)
+    if not account:
+        return jsonify({"error": "Account not found"}), 404
+
+    return jsonify({"balance": account["balance"]}), 200
+
 @app.route("/buy-item", methods=["POST"])
 def buy_item():
     email = request.json.get("email")
