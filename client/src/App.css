@@ -140,7 +140,8 @@ body {
 }
 
 .image-preview {
-  max-width: 100%;
+  max-width: 90px;
+  max-height: 125px;
   margin-top: 10px;
 }
 
