@@ -1,41 +1,39 @@
-/* App.css */
-
+/* Base Styles */
 body {
   margin: 0;
-  font-family: 'Spiegel';
-  background-color: white;
-  color: #13908C;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #f7f7f7;
+  color: #333;
 }
 
 .container {
-  max-width: 1000px;
-  margin:  auto;
-  padding: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .header {
   text-align: center;
-  font-size: 35px ;
   margin-bottom: 30px;
-  font-family: 'Beaufort';
-  
 }
 
 .tagline {
-  font-size: 20px ;
+  font-size: 1.2rem;
   color: #666;
 }
 
+/* Form & Homepage Containers */
 .form-container,
 .homepage {
-  background-color: white;
-  border-radius: 100px;
-  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 100px;
+  margin-bottom: 30px;
   text-align: center;
-  font-family: 'Spiegel';
 }
+
+/* Input & Select Fields */
 .input-field,
 .select-field {
   width: 100%;
@@ -46,8 +44,9 @@ body {
   border-radius: 4px;
 }
 
+/* Buttons */
 .button {
-  background-color: #214f81;
+  background-color: #007bff;
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -58,9 +57,18 @@ body {
 }
 
 .button:hover {
-  background-color: #2d4d8e;
+  background-color: #0056b3;
 }
 
+.buy-btn {
+  background-color: #28a745;
+}
+
+.buy-btn:hover {
+  background-color: #218838;
+}
+
+/* Error and Success Messages */
 .error {
   color: #d9534f;
 }
@@ -69,16 +77,22 @@ body {
   color: #5cb85c;
 }
 
+/* Dropdown Container */
 .dropdown-container {
   margin: 20px 0;
 }
 
+/* Homepage Header */
 .homepage-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* Stack the header and button vertically */
+  align-items: center;    /* Center horizontally */
+  justify-content: center;/* Center vertically if needed */
+  text-align: center;     /* Center text within the container */
+  margin: 5px 0;
 }
 
+/* Listings */
 .listings {
   display: flex;
   flex-wrap: wrap;
@@ -105,7 +119,7 @@ body {
   border-radius: 4px;
 }
 
-/* Modal styles for Create Listing */
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -141,7 +155,7 @@ body {
 
 .image-preview {
   max-width: 90px;
-  max-height: 125px;
+  max-height: 120px;
   margin-top: 10px;
 }
 

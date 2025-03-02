@@ -15,6 +15,7 @@ function App() {
     const [price, setPrice] = useState('');
     const [listings, setListings] = useState([]);
 
+
     const fetchData = async () => { 
       try {
         const response = await fetch('http://localhost:5000/customer');
@@ -157,66 +158,35 @@ function App() {
     }, [hasFetched]);
 
     return (
-      <div style={{ textAlign: 'center', position: 'relative' }}>
+      <div className="container">
+      <header className="header">
         <h1>Dormmate</h1>
-        <h5>A campus marketplace tailored for students</h5>
-        <h3>Please enter your .edu email</h3>
+        <p className="tagline">The campus marketplace tailored for students</p>
+      </header>
 
-        <input
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder="Enter your .edu email"
-          style={{ display: 'block', margin: '0 auto', padding: '8px', width: '250px' }}
-        />
-
-        {errorMessage && <p style={{ color: errorMessage.includes('❌') ? 'red' : 'green' }}>{errorMessage}</p>}
-
-        <div>
-          <h3>Select Dorm Building:</h3>
-          <select value={selectedOption} onChange={handleChange}>
-            <option value="">-- Select an option --</option>
-            <option value="ozanam">Ozanam</option>
-            <option value="munroe">Munroe</option>
-            <option value="lecompte">LeCompte</option>
-            <option value="university">University</option>
-            <option value="seton">Seton</option>
-            <option value="corcoran">Corcoran</option>
-          </select>
-        </div>
-
-        <button
-          onClick={handleSubmit}
-          style={{ display: 'block', margin: '10px auto', padding: '10px 20px', cursor: 'pointer' }}
-        >
-          Submit
-        </button>
-
-        {/* Create Listing Section */}
-        {isCreateListingVisible && (
-          <div style={{ position: 'absolute', top: '50px', left: '100px' }}>
-            <h2>Create a Listing</h2>
-
-            <h4>Title</h4>
-            <input
-              type="text"
-              value={title}
-              onChange={handleTitleChange}
-              placeholder="Title"
-              style={{ display: 'block', margin: '0 auto', padding: '8px', width: '250px' }}
-            />
-
-            <h4>Price $</h4>
-            <input
-              type="number"
-              value={price}
-              onChange={handlePriceChange}
-              placeholder="Price $"
-              style={{ display: 'block', margin: '0 auto', padding: '8px', width: '250px' }}
-            />
-
-            <h4>Location</h4>
-            <select value={selectedOptionListing} onChange={handleListingChange}>
+      {/* Login/Email Form */}
+      {!isHomepageVisible && (
+        <div className="form-container">
+          <h3>Please enter your .edu email</h3>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder="Enter your .edu email"
+            className="input-field"
+          />
+          {errorMessage && (
+            <p className={errorMessage.includes('❌') ? 'error' : 'success'}>
+              {errorMessage}
+            </p>
+          )}
+          <div className="dropdown-container">
+            <h3>Select Dorm Building:</h3>
+            <select
+              value={selectedOption}
+              onChange={handleChange}
+              className="select-field"
+            >
               <option value="">-- Select an option --</option>
               <option value="ozanam">Ozanam</option>
               <option value="munroe">Munroe</option>
@@ -225,45 +195,115 @@ function App() {
               <option value="seton">Seton</option>
               <option value="corcoran">Corcoran</option>
             </select>
+          </div>
+          <button onClick={handleSubmit} className="button">
+            Submit
+          </button>
+        </div>
+      )}
 
-            <h4>Image</h4>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-
-            {/* Display image preview */}
-            {imageInput && (
-              <div>
-                <h4>Image Preview:</h4>
-                <img src={imageInput} alt="Preview" style={{ maxWidth: '300px', marginTop: '10px' }} />
-              </div>
-            )}
-
+      {/* Homepage with Listings */}
+      {isHomepageVisible && (
+        <div className="homepage">
+          <div className="homepage-header">
+            <h1 style={{ textAlign: 'center' }}>Homepage</h1>
             <button
-              onClick={handleListingSubmit}
-              style={{ display: 'block', margin: '10px auto', padding: '10px 20px', cursor: 'pointer' }}
+              className="button create-btn"
+              onClick={() => setIsCreateListingVisible(true)}
             >
-              Submit
+              Create Listing
             </button>
           </div>
-        )}
-
-        {/* Homepage */}
-        {isHomepageVisible && (
-          <div>
-            <h1>Homepage</h1>
-            <button onClick={() => setIsCreateListingVisible(true)}>Create Listing</button>
-            <h2>Listings</h2>
+          <h2>Listings</h2>
+          <div className="listings">
             {listings.map((listing, index) => (
-              <div key={index} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px' }}>
+              <div key={index} className="listing-card">
                 <h3>{listing.title}</h3>
                 <p>Price: ${listing.price}</p>
                 <p>Location: {listing.location}</p>
-                {listing.image && <img src={listing.image} alt="Listing" style={{ maxWidth: '200px' }} />}
-                <button onClick={() => handleBuy(index)}>Buy</button>
+                {listing.image && (
+                  <img src={listing.image} alt="Listing" className="listing-image" />
+                )}
+                <button onClick={() => handleBuy(index)} className="button buy-btn">
+                  Buy
+                </button>
               </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Create Listing Modal */}
+      {isCreateListingVisible && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Create a Listing</h2>
+            <div className="modal-form-group">
+              <label>Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={handleTitleChange}
+                placeholder="Title"
+                className="input-field"
+              />
+            </div>
+            <div className="modal-form-group">
+              <label>Price ($)</label>
+              <input
+                type="number"
+                value={price}
+                onChange={handlePriceChange}
+                placeholder="Price $"
+                className="input-field"
+              />
+            </div>
+            <div className="modal-form-group">
+              <label>Location</label>
+              <select
+                value={selectedOptionListing}
+                onChange={handleListingChange}
+                className="select-field"
+              >
+                <option value="">-- Select an option --</option>
+                <option value="ozanam">Ozanam</option>
+                <option value="munroe">Munroe</option>
+                <option value="lecompte">LeCompte</option>
+                <option value="university">University</option>
+                <option value="seton">Seton</option>
+                <option value="corcoran">Corcoran</option>
+              </select>
+            </div>
+            <div className="modal-form-group">
+              <label>Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="input-field"
+              />
+            </div>
+            {imageInput && (
+              <div className="modal-form-group">
+                <label>Image Preview:</label>
+                <img src={imageInput} alt="Preview" className="image-preview" />
+              </div>
+            )}
+            <div className="modal-buttons">
+              <button onClick={handleListingSubmit} className="button modal-btn">
+                Submit
+              </button>
+              <button
+                onClick={() => setIsCreateListingVisible(false)}
+                className="button modal-btn cancel"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
     );
 }
 
